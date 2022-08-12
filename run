@@ -9,18 +9,13 @@ crun="$(which composer)"
 # npm legacy version
 npm_legacy_version="6.14.4"
 
-# npm current version
-npm_version="$(npm -v)"
-
-# yarn current version
-yarn_version="$(yarn -v)"
-
-# composer current version
-composer_version=$(composer -V | grep ^Composer | cut -d' ' -f3)
-
 func_npm() {
   # check if npm command exist
   if hash npm 2>/dev/null; then
+  
+    # npm current version
+    npm_version="$(npm -v)"
+
     echo "[*] Detected NPM version: $npm_version"
   else
     echo "[*] NPM not found. exit"
@@ -31,6 +26,10 @@ func_npm() {
 func_yarn() {
   # check if yarn command exist
   if hash yarn 2>/dev/null; then
+
+    # yarn current version
+    yarn_version="$(yarn -v)"
+
     echo "[*] Detected Yarn version: $yarn_version"
   else
     echo "[*] Yarn not found. Please install first"
@@ -41,11 +40,11 @@ func_yarn() {
 func_php() {
   # print php version
   if hash php 2>/dev/null; then
-    echo "[*] Detected php version: $php_version"
-    
+
     # php current version
     php_version=$(php -v | grep ^PHP | cut -d' ' -f2)
 
+    echo "[*] Detected php version: $php_version"
   else
     echo "[*] PHP not found. Please install first"
     exit
@@ -54,6 +53,10 @@ func_php() {
 
 func_composer() {
   if hash composer 2>/dev/null; then
+
+    # composer current version
+    composer_version=$(composer -V | grep ^Composer | cut -d' ' -f3)
+
     echo "[*] Detected composer version: $composer_version"
   else
     echo "[*] Composer not found. Please install first"
