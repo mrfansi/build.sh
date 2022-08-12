@@ -286,6 +286,7 @@ if [ -f "./ecosystem.config.js" ]; then
 
   # start or restart server
   echo "[*] Restarting server using pm2"
-  pm2 restart ecosystem.config.js
+  pm2 restart ecosystem.config.js &>/dev/null
+  pm2 reset ecosystem.config.js &>/dev/null
 
 fi
