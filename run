@@ -23,54 +23,42 @@ composer_version=$(composer -V | grep ^Composer | cut -d' ' -f3)
 
 func_npm() {
   # check if npm command exist
-  if [! command -v npm &>/dev/null ]; then
+  if hash npm 2>/dev/null; then
+    echo "[*] Detected NPM version: $npm_version"
+  else
     echo "[*] NPM not found. exit"
     exit
-  else
-    echo "[*] Detected NPM version: $npm_version"
   fi
 }
 
 func_yarn() {
   # check if yarn command exist
-  if [! command -v yarn &>/dev/null ]; then
+  if hash yarn 2>/dev/null; then
+    echo "[*] Detected Yarn version: $yarn_version"
+  else
     echo "[*] Yarn not found. Please install first"
     exit
-  else
-    echo "[*] Detected Yarn version: $yarn_version"
   fi
 }
 
 func_php() {
   # print php version
-  if [! command -v php &>/dev/null ]; then
+  if hash php 2>/dev/null; then
+    echo "[*] Detected php version: $php_version"
+  else
     echo "[*] PHP not found. Please install first"
     exit
-  else
-    echo "[*] Detected php version: $php_version"
   fi
 }
 
 func_composer() {
-  if [! command -v composer &>/dev/null ]; then
+  if hash composer 2>/dev/null; then
+    echo "[*] Detected composer version: $composer_version"
+  else
     echo "[*] Composer not found. Please install first"
     exit
-  else
-    echo "[*] Detected composer version: $composer_version"
   fi
 }
-
-# check yarn
-func_yarn
-
-# check npm
-func_npm
-
-# check php
-func_php
-
-# check composer
-func_composer
 
 func_build_log() {
   if [ ! -f "./build.log" ]; then
@@ -89,6 +77,9 @@ if [ -f "./package.json" ]; then
 
   if [ -f "./package-lock.json" ]; then
 
+    # check npm
+    func_npm
+
     # Remove package-lock.json
     echo "[*] Remove package-lock.json"
     rm -rf "./package-lock.json"
@@ -98,6 +89,9 @@ if [ -f "./package.json" ]; then
     npm install &>/dev/null
 
   elif [ -f "./yarn.lock" ]; then
+
+    # check yarn
+    func_yarn
 
     # Remove yarn.lock
     echo "[*] Remove yarn.lock"
@@ -112,6 +106,9 @@ if [ -f "./package.json" ]; then
     prun="$(which yarn)"
   else
     echo "[*] No package-lock.json or yarn.lock found"
+
+    # check npm
+    func_npm
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm"
@@ -178,6 +175,12 @@ fi
 
 # check if project is using PHP Language
 if [ -f "./composer.json" ]; then
+
+  # check php
+  func_php
+
+  # check composer
+  func_composer
 
   # Find composer.lock file and remove
   if [ -f "./composer.lock" ]; then
