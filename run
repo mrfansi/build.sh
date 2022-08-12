@@ -12,7 +12,7 @@ npm_legacy_version="6.14.4"
 func_npm() {
   # check if npm command exist
   if hash npm 2>/dev/null; then
-  
+
     # npm current version
     npm_version="$(npm -v)"
 
@@ -90,7 +90,12 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm"
-    npm install &>/dev/null
+    if awk "BEGIN {exit !($npm_version >= $npm_legacy_version)}"; then
+      echo "[*] Installing depedencies using npm legacy mode"
+      npm install --legacy-peer-deps &>/dev/null
+    else
+      npm install &>/dev/null
+    fi
 
   elif [ -f "./yarn.lock" ]; then
 
