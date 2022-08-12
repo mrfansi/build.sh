@@ -19,7 +19,7 @@ func_npm() {
 
 func_yarn() {
   # check if yarn command exist
-  if [! command -v yarn &>/dev/null]; then
+  if [! command -v yarn &>/dev/null ]; then
     echo "[*] Yarn not found. Please install first"
     exit
   else
