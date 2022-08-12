@@ -90,7 +90,7 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm"
-    if awk "BEGIN {exit !($npm_version >= $npm_legacy_version)}"; then
+    if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
       echo "[*] Installing depedencies using npm legacy mode"
       npm install --legacy-peer-deps &>/dev/null
     else
@@ -121,7 +121,7 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm"
-    if awk "BEGIN {exit !($npm_version >= $npm_legacy_version)}"; then
+    if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
       echo "[*] Installing depedencies using npm legacy mode"
       npm install --legacy-peer-deps &>/dev/null
     else
@@ -170,8 +170,27 @@ if [ -f "./ace" ]; then
     echo "[*] Build adonis 5 framework"
     $prun build &>/dev/null
 
-    echo "[*] Copy env file into production folder"
+    echo "[*] Copy env file into build folder"
     cp .env build/
+
+    echo "[*] Clean install on build folder"
+
+    if [ -f "./package-lock.json" ]; then
+
+      if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
+        ci="npm ci --production --legacy-peer-deps"
+      else
+        ci="npm ci --production"
+      fi
+
+    elif [ -f "./yarn.lock" ]; then
+      ci="yarn install --production"
+    fi
+
+    cd build/
+
+    $ci &>/dev/null
+
   else
     echo "[*] It seems adonis framework"
   fi
