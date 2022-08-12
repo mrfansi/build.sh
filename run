@@ -155,6 +155,23 @@ if [ -f "./next.config.js" ]; then
   func_build_log
 fi
 
+# check if project is ReactJS
+if [ -f "./node_modules/.bin/react-scripts" ]; then
+  echo "[*] It seems reactjs framework"
+  
+  # find build folder and remove
+  if [ -d "./build" ]; then
+    rm -rf "./build"
+  fi
+
+  # Build reactjs framework
+  echo "[*] Build reactjs framework"
+  $prun build &>/dev/null
+
+  # write log
+  func_build_log
+fi
+
 # check if project is Adonis
 if [ -f "./ace" ]; then
 
