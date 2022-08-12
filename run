@@ -279,14 +279,14 @@ fi
 
 
 # check if running using pm2
-if [ -f "./pm2.js" ]; then
+if [ -f "./ecosystem.config.js" ]; then
 
   # check pm2 exist
   func_pm2
 
   # start or restart server
   echo "[*] Restarting server using pm2"
-  pm2 restart pm2.js &>/dev/null
-  pm2 reset pm2.js &>/dev/null
+  pm2 restart ecosystem.config.js &>/dev/null
+  pm2 reset ecosystem.config.js &>/dev/null
 
 fi
