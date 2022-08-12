@@ -60,6 +60,18 @@ func_composer() {
   fi
 }
 
+# check yarn
+func_yarn
+
+# check npm
+func_npm
+
+# check php
+func_php
+
+# check composer
+func_composer
+
 func_build_log() {
   if [ ! -f "./build.log" ]; then
     touch "./build.log"
@@ -77,9 +89,6 @@ if [ -f "./package.json" ]; then
 
   if [ -f "./package-lock.json" ]; then
 
-    # check NPM
-    func_npm
-
     # Remove package-lock.json
     echo "[*] Remove package-lock.json"
     rm -rf "./package-lock.json"
@@ -89,9 +98,6 @@ if [ -f "./package.json" ]; then
     npm install &>/dev/null
 
   elif [ -f "./yarn.lock" ]; then
-
-    # check yarn
-    func_yarn
 
     # Remove yarn.lock
     echo "[*] Remove yarn.lock"
@@ -106,9 +112,6 @@ if [ -f "./package.json" ]; then
     prun="$(which yarn)"
   else
     echo "[*] No package-lock.json or yarn.lock found"
-
-    # check NPM
-    func_npm
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm"
@@ -136,14 +139,14 @@ if [ -f "./next.config.js" ]; then
   echo "[*] Build nextjs framework"
   $prun build &>/dev/null
 
-  # write log
-  func_build_log
-
   # Find next-sitemap
   if [ -f "./next-sitemap.js" ]; then
     echo "[*] Build next-sitemap plugin"
     $prun sitemap &>/dev/null
   fi
+
+  # write log
+  func_build_log
 fi
 
 # check if project is Adonis
@@ -175,12 +178,6 @@ fi
 
 # check if project is using PHP Language
 if [ -f "./composer.json" ]; then
-
-  # check php
-  func_php
-
-  # check composer
-  func_composer
 
   # Find composer.lock file and remove
   if [ -f "./composer.lock" ]; then
