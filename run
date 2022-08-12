@@ -64,6 +64,19 @@ func_composer() {
   fi
 }
 
+func_pm2() {
+  if hash pm2 2>/dev/null; then
+
+    # pm2 current version
+    pm2_version=$(pm2 -v)
+
+    echo "[*] Detected pm2 version: $pm2_version"
+  else
+    echo "[*] PM2 not found. Please install first"
+    exit
+  fi
+}
+
 func_build_log() {
   if [ ! -f "./build.log" ]; then
     touch "./build.log"
@@ -92,9 +105,9 @@ if [ -f "./package.json" ]; then
     echo "[*] Install depedencies of package.json using npm"
     if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
       echo "[*] Installing depedencies using npm legacy mode"
-      npm install --legacy-peer-deps >> "./build.log"
+      npm install --legacy-peer-deps &>/dev/null
     else
-      npm install >> "./build.log"
+      npm install &>/dev/null
     fi
 
   elif [ -f "./yarn.lock" ]; then
@@ -123,9 +136,9 @@ if [ -f "./package.json" ]; then
     echo "[*] Install depedencies of package.json using npm"
     if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
       echo "[*] Installing depedencies using npm legacy mode"
-      npm install --legacy-peer-deps >> "./build.log"
+      npm install --legacy-peer-deps &>/dev/null
     else
-      npm install >> "./build.log"
+      npm install &>/dev/null
     fi
 
   fi
@@ -143,7 +156,7 @@ if [ -f "./next.config.js" ]; then
 
   # Build nextjs framework
   echo "[*] Build nextjs framework"
-  $prun build >> "./build.log"
+  $prun build &>/dev/null
 
   # Find next-sitemap
   if [ -f "./next-sitemap.js" ]; then
@@ -166,7 +179,7 @@ if [ -f "./node_modules/.bin/react-scripts" ]; then
 
   # Build reactjs framework
   echo "[*] Build reactjs framework"
-  $prun build >> "./build.log"
+  $prun build &>/dev/null
 
   # write log
   func_build_log
@@ -185,7 +198,7 @@ if [ -f "./ace" ]; then
 
     # Build adonis 5 framework
     echo "[*] Build adonis 5 framework"
-    $prun build >> "./build.log"
+    $prun build &>/dev/null
 
     echo "[*] Copy env file into build folder"
     cp .env build/
@@ -207,6 +220,8 @@ if [ -f "./ace" ]; then
     cd build/
 
     $ci &>/dev/null
+
+    cd ../
 
   else
     echo "[*] It seems adonis framework"
@@ -260,4 +275,17 @@ if [ -f "./composer.json" ]; then
     # write log
     func_build_log
   fi
+fi
+
+
+# check if running using pm2
+if [ -f "./ecosystem.config.js" ]; then
+
+  # check pm2 exist
+  func_pm2
+
+  # start or restart server
+  echo "[*] Restarting server using pm2"
+  pm2 restart ecosystem.config.js
+
 fi
