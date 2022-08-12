@@ -6,14 +6,28 @@ prun="$(which npm) run"
 # default run composer manager
 crun="$(which composer)"
 
+# npm legacy version
+npm_legacy_version="6.14.4"
+
+# npm current version
+npm_version="$(npm -v)"
+
+# yarn current version
+yarn_version="$(yarn -v)"
+
+# php current version
+php_version=$(php -v | grep ^PHP | cut -d' ' -f2)
+
+# composer current version
+composer_version=$(composer -V | grep ^Composer | cut -d' ' -f3)
+
 func_npm() {
   # check if npm command exist
   if [! command -v npm &>/dev/null ]; then
     echo "[*] NPM not found. exit"
     exit
   else
-    version=$(npm -v)
-    echo "[*] Detected NPM version: $version"
+    echo "[*] Detected NPM version: $npm_version"
   fi
 }
 
@@ -23,8 +37,7 @@ func_yarn() {
     echo "[*] Yarn not found. Please install first"
     exit
   else
-    version=$(yarn -v)
-    echo "[*] Detected Yarn version: $version"
+    echo "[*] Detected Yarn version: $yarn_version"
   fi
 }
 
@@ -34,8 +47,7 @@ func_php() {
     echo "[*] PHP not found. Please install first"
     exit
   else
-    version=$(php -v | grep ^PHP | cut -d' ' -f2)
-    echo "[*] Detected php version: $version"
+    echo "[*] Detected php version: $php_version"
   fi
 }
 
@@ -44,8 +56,7 @@ func_composer() {
     echo "[*] Composer not found. Please install first"
     exit
   else
-    version=$(composer -V | grep ^Composer | cut -d' ' -f3)
-    echo "[*] Detected composer version: $version"
+    echo "[*] Detected composer version: $composer_version"
   fi
 }
 
@@ -58,16 +69,11 @@ func_build_log() {
   count=$(awk 'END { print NR }' ./build.log)
 
   echo "[build] Build #$(($count+1)) at $now" >> "./build.log"
+  echo "[*] OK"
 }
 
 if [ -f "./package.json" ]; then
   echo "[*] Package.json detected"
-
-  # Remove node_modules
-  # if [ -d "./node_modules" ]; then
-  #   echo "[*] Remove node_modules"
-  #   rm -rf "./node_modules"
-  # fi
 
   if [ -f "./package-lock.json" ]; then
 
@@ -106,7 +112,13 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm"
-    npm install &>/dev/null
+    if awk "BEGIN {exit !($npm_version >= $npm_legacy_version)}"; then
+      echo "[*] Installing depedencies using npm legacy mode"
+      npm install --legacy-peer-deps &>/dev/null
+    else
+      npm install &>/dev/null
+    fi
+
   fi
 fi
 
@@ -132,6 +144,32 @@ if [ -f "./next.config.js" ]; then
     echo "[*] Build next-sitemap plugin"
     $prun sitemap &>/dev/null
   fi
+fi
+
+# check if project is Adonis
+if [ -f "./ace" ]; then
+
+  if [ -f "./env.ts" ]; then
+    echo "[*] It seems adonis 5 framework"
+
+    # find build folder and remove
+    if [ -d "./build" ]; then
+      rm -rf "./build"
+    fi
+
+    # Build adonis 5 framework
+    echo "[*] Build adonis 5 framework"
+    $prun build &>/dev/null
+
+    echo "[*] Copy env file into production folder"
+    cp .env build/
+  else
+    echo "[*] It seems adonis framework"
+  fi
+
+  # write log
+  func_build_log
+
 fi
 
 
