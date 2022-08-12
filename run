@@ -15,9 +15,6 @@ npm_version="$(npm -v)"
 # yarn current version
 yarn_version="$(yarn -v)"
 
-# php current version
-php_version=$(php -v | grep ^PHP | cut -d' ' -f2)
-
 # composer current version
 composer_version=$(composer -V | grep ^Composer | cut -d' ' -f3)
 
@@ -45,6 +42,10 @@ func_php() {
   # print php version
   if hash php 2>/dev/null; then
     echo "[*] Detected php version: $php_version"
+    
+    # php current version
+    php_version=$(php -v | grep ^PHP | cut -d' ' -f2)
+
   else
     echo "[*] PHP not found. Please install first"
     exit
