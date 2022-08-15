@@ -103,12 +103,12 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm"
-    if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
-      echo "[*] Installing depedencies using npm legacy mode"
-      npm install --legacy-peer-deps &>/dev/null
-    else
+    # if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
+    #   echo "[*] Installing depedencies using npm legacy mode"
+    #   npm install --legacy-peer-deps &>/dev/null
+    # else
       npm install &>/dev/null
-    fi
+    # fi
 
   elif [ -f "./yarn.lock" ]; then
 
@@ -134,12 +134,12 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm"
-    if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
-      echo "[*] Installing depedencies using npm legacy mode"
-      npm install --legacy-peer-deps &>/dev/null
-    else
+    # if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
+    #   echo "[*] Installing depedencies using npm legacy mode"
+    #   npm install --legacy-peer-deps &>/dev/null
+    # else
       npm install &>/dev/null
-    fi
+    # fi
 
   fi
 fi
@@ -207,11 +207,11 @@ if [ -f "./ace" ]; then
 
     if [ -f "./package-lock.json" ]; then
 
-      if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
-        ci="npm ci --production --legacy-peer-deps"
-      else
+      # if awk "BEGIN {exit !($npm_version > $npm_legacy_version)}"; then
+      #   ci="npm ci --production --legacy-peer-deps"
+      # else
         ci="npm ci --production"
-      fi
+      # fi
 
     elif [ -f "./yarn.lock" ]; then
       ci="yarn install --production"
