@@ -85,7 +85,7 @@ func_build_log() {
   now="$(date +'%Y-%m-%d %H:%M')"
   count=$(awk 'END { print NR }' ./build.log)
 
-  echo "[build] Build #$(($count+1)) at $now" >> "./build.log"
+  echo "[*] Build #$(($count+1)) at $now" >> "./build.log"
   echo "[*] OK"
 }
 
