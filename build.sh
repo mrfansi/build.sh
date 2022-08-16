@@ -95,9 +95,8 @@ func_pm2() {
 
 func_build_log() {
   now="$(date +'%Y-%m-%d %H:%M')"
-  count=$(awk 'END { print NR }' ./build.log)
 
-  echo "[*] Build #$(($count+1)) at $now" >> "./build.log"
+  echo "[*] Build completed at $now" >> "./build.log"
 }
 
 if [ -f "./package.json" ]; then
@@ -176,7 +175,7 @@ fi
 
 # check if project is ReactJS
 if [ -f "./node_modules/.bin/react-scripts" ]; then
-  echo "[*] It seems reactjs framework"
+  echo "[*] It seems reactjs framework" >> "./build.log"
   
   # find build folder and remove
   if [ -d "./build" ]; then
