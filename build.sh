@@ -10,7 +10,6 @@ cpm2="$(which pm2)"
 # default run package manager
 prun="$($cnpm) run"
 
-
 func_logs() {
 
   # remove folder logs
