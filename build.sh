@@ -15,7 +15,7 @@ func_remove_log() {
   if [ -f "./logs/build.log" ]; then
     rm -rf "./logs/build.log"
   else
-    mkdir "./log"
+    mkdir "./logs"
   fi
 }
 
