@@ -1,13 +1,15 @@
 #!/bin/bash
 
+# program
+cnpm="$(which npm)"
+cyarn="$(which yarn)"
+ccomposer="$(which composer)"
+cphp="$(which php)"
+cpm2="$(which pm2)"
+
 # default run package manager
-prun="npm run"
+prun="$($cnpm) run"
 
-# default run composer manager
-crun="composer"
-
-# npm legacy version
-npm_legacy_version="6.14.4"
 
 func_logs() {
 
@@ -18,20 +20,12 @@ func_logs() {
   mkdir "./logs"
 }
 
-func_logs
-
-
-if [ -f "./ecosystem.config.js" ]; then
-  echo "[*] Stop server PM2 first" >> "./logs/build.log"
-  pm2 stop "./ecosystem.config.js" &>/dev/null
-fi
-
 func_npm() {
   # check if npm command exist
-  if type npm &>/dev/null; then
+  if type $cnpm &>/dev/null; then
 
     # npm current version
-    npm_version="$(npm -v)"
+    npm_version="$($cnpm -v)"
 
     echo "[*] Detected NPM version: $npm_version" >> "./logs/build.log"
   else
@@ -42,7 +36,7 @@ func_npm() {
 
 func_yarn() {
   # check if yarn command exist
-  if type yarn &>/dev/null; then
+  if type $cyarn &>/dev/null; then
 
     # yarn current version
     yarn_version="$(yarn -v)"
@@ -56,12 +50,12 @@ func_yarn() {
 
 func_php() {
   # print php version
-  if type php &>/dev/null; then
+  if type $cphp &>/dev/null; then
 
     # php current version
-    php_version=$(php -v | grep ^PHP | cut -d' ' -f2)
+    php_version=$($cphp -v | grep ^PHP | cut -d' ' -f2)
 
-    echo "[*] Detected php version: $php_version" >> "./logs/build.log"
+    echo "[*] Detected PHP version: $php_version" >> "./logs/build.log"
   else
     echo "[*] PHP not found. Please install first" >> "./logs/build.log"
     exit
@@ -69,10 +63,10 @@ func_php() {
 }
 
 func_composer() {
-  if type composer &>/dev/null; then
+  if type $ccomposer &>/dev/null; then
 
     # composer current version
-    composer_version=$(composer -V | grep ^Composer | cut -d' ' -f3)
+    composer_version=$($ccomposer -V | grep ^Composer | cut -d' ' -f3)
 
     echo "[*] Detected composer version: $composer_version" >> "./logs/build.log"
   else
@@ -82,10 +76,10 @@ func_composer() {
 }
 
 func_pm2() {
-  if type pm2 &>/dev/null; then
+  if type $cpm2 &>/dev/null; then
 
     # pm2 current version
-    pm2_version=$(pm2 -v)
+    pm2_version=$($cpm2 -v)
 
     echo "[*] Detected pm2 version: $pm2_version" >> "./logs/build.log"
   else
@@ -99,6 +93,13 @@ func_build_log() {
 
   echo "[*] Build completed at $now" >> "./logs/build.log"
 }
+
+func_logs
+
+if [ -f "./ecosystem.config.js" ]; then
+  echo "[*] Stop server PM2 first" >> "./logs/build.log"
+  $cpm2 stop "./ecosystem.config.js" &>/dev/null
+fi
 
 if [ -f "./package.json" ]; then
   echo "[*] Package.json detected" >> "./logs/build.log"
@@ -119,7 +120,7 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm" >> "./logs/build.log"
-    npm install &> "./logs/npm.log"
+    $cnpm install &> "./logs/npm.log"
 
   elif [ -f "./yarn.lock" ]; then
 
@@ -132,11 +133,11 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using yarn" >> "./logs/build.log"
-    yarn &> "./logs/yarn.log"
+    $cyarn &> "./logs/yarn.log"
 
     # Set alias command for run yarn
     echo "[*] Set alias command for run yarn" >> "./logs/build.log"
-    prun="yarn"
+    prun="$($cyarn)"
   else
     echo "[*] No package-lock.json or yarn.lock found" >> "./logs/build.log"
 
@@ -145,7 +146,7 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm" >> "./logs/build.log"
-    npm install &> "./logs/npm.log"
+    $cnpm install &> "./logs/npm.log"
 
   fi
 fi
@@ -212,9 +213,9 @@ if [ -f "./ace" ]; then
     echo "[*] Clean install on build folder" >> "./logs/build.log"
 
     if [ -f "./package-lock.json" ]; then
-      ci="npm ci --production"
+      ci="$cnpm ci --production"
     elif [ -f "./yarn.lock" ]; then
-      ci="yarn install --production"
+      ci="$cyarn install --production"
     fi
 
     cd build/
@@ -256,13 +257,13 @@ if [ -f "./composer.json" ]; then
 
   # Install depedencies of composer.json
   echo "[*] Install depedencies of composer.json using composer" >> "./logs/build.log"
-  $crun install &> "./logs/composer.log"
+  $ccomposer install &> "./logs/composer.log"
 
   # check if project is Laravel
   if [ -f "./artisan" ]; then
     echo "[*] It seems laravel framework" >> "./logs/build.log"
 
-    artisan="$(php artisan)"
+    artisan="$($cphp artisan)"
 
     # build javascript webpack
     echo "[*] Bundling javascript files with webpack" >> "./logs/build.log"
