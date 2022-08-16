@@ -119,7 +119,7 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm" >> "./build.log"
-    npm install &> "./build.log"
+    npm install &> "./npm.log"
 
   elif [ -f "./yarn.lock" ]; then
 
@@ -132,7 +132,7 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using yarn" >> "./build.log"
-    yarn &> "./build.log"
+    yarn &> "./yarn.log"
 
     # Set alias command for run yarn
     echo "[*] Set alias command for run yarn" >> "./build.log"
@@ -145,7 +145,7 @@ if [ -f "./package.json" ]; then
 
     # Install depedencies of package.json
     echo "[*] Install depedencies of package.json using npm" >> "./build.log"
-    npm install &> "./build.log"
+    npm install &> "./npm.log"
 
   fi
 fi
@@ -162,12 +162,12 @@ if [ -f "./next.config.js" ]; then
 
   # Build nextjs framework
   echo "[*] Build nextjs framework" >> "./build.log"
-  $prun build &> "./build.log"
+  $prun build &> "./nextjs.log"
 
   # Find next-sitemap
   if [ -f "./next-sitemap.js" ]; then
     echo "[*] Build next-sitemap plugin" >> "./build.log"
-    $prun sitemap &> "./build.log"
+    $prun sitemap &> "./next-sitemap.log"
   fi
 
   # write log
@@ -185,7 +185,7 @@ if [ -f "./node_modules/.bin/react-scripts" ]; then
 
   # Build reactjs framework
   echo "[*] Build reactjs framework" >> "./build.log"
-  $prun build &> "./build.log"
+  $prun build &> "./reactjs.log"
 
   # write log
   func_build_log
@@ -204,7 +204,7 @@ if [ -f "./ace" ]; then
 
     # Build adonis 5 framework
     echo "[*] Build adonis 5 framework" >> "./build.log"
-    $prun build &> "./build.log"
+    $prun build &> "./adonis5.log"
 
     echo "[*] Copy env file into build folder" >> "./build.log"
     cp .env build/
@@ -219,7 +219,7 @@ if [ -f "./ace" ]; then
 
     cd build/
 
-    $ci &> "./build.log"
+    $ci &> "./adonis5-production.log"
 
     cd ../
 
@@ -256,7 +256,7 @@ if [ -f "./composer.json" ]; then
 
   # Install depedencies of composer.json
   echo "[*] Install depedencies of composer.json using composer" >> "./build.log"
-  $crun install &> "./build.log"
+  $crun install &> "./composer.log"
 
   # check if project is Laravel
   if [ -f "./artisan" ]; then
@@ -266,11 +266,11 @@ if [ -f "./composer.json" ]; then
 
     # build javascript webpack
     echo "[*] Bundling javascript files with webpack" >> "./build.log"
-    $prun prod &> "./build.log"
+    $prun prod &> "./laravel.log"
 
     # remove the cached bootstrap files
     echo "[*] Remove the cached bootstrap files" >> "./build.log"
-    $artisan optimize:clear &> "./build.log"
+    $artisan optimize:clear &> "./laravel.log"
 
     # write log
     func_build_log
