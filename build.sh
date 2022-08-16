@@ -9,17 +9,17 @@ crun="composer"
 # npm legacy version
 npm_legacy_version="6.14.4"
 
-func_remove_log() {
+func_logs() {
 
-  # remove build.log
-  if [ -f "./logs/build.log" ]; then
-    rm -rf "./logs/build.log"
+  # remove folder logs
+  if [ -d "./logs" ]; then
+    rm -rf "./logs"
   else
     mkdir "./logs"
   fi
 }
 
-func_remove_log
+func_logs
 
 
 if [ -f "./ecosystem.config.js" ]; then
