@@ -8,7 +8,7 @@ cphp="$(which php)"
 cpm2="$(which pm2)"
 
 # default run package manager
-prun="$($cnpm) run"
+prun="$(which npm) run"
 
 func_logs() {
 
@@ -136,7 +136,7 @@ if [ -f "./package.json" ]; then
 
     # Set alias command for run yarn
     echo "[*] Set alias command for run yarn" >> "./logs/build.log"
-    prun="$($cyarn)"
+    prun="$(which yarn)"
   else
     echo "[*] No package-lock.json or yarn.lock found" >> "./logs/build.log"
 
