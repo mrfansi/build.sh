@@ -14,9 +14,8 @@ func_logs() {
   # remove folder logs
   if [ -d "./logs" ]; then
     rm -rf "./logs"
-  else
-    mkdir "./logs"
   fi
+  mkdir "./logs"
 }
 
 func_logs
