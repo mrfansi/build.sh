@@ -12,8 +12,10 @@ npm_legacy_version="6.14.4"
 func_remove_log() {
 
   # remove build.log
-  if [ -f "./build.log" ]; then
-    rm -rf "./build.log"
+  if [ -f "./logs/build.log" ]; then
+    rm -rf "./logs/build.log"
+  else
+    mkdir "./log"
   fi
 }
 
@@ -21,7 +23,7 @@ func_remove_log
 
 
 if [ -f "./ecosystem.config.js" ]; then
-  echo "[*] Stop server PM2 first" >> "./build.log"
+  echo "[*] Stop server PM2 first" >> "./logs/build.log"
   pm2 stop "./ecosystem.config.js" &>/dev/null
 fi
 
@@ -32,9 +34,9 @@ func_npm() {
     # npm current version
     npm_version="$(npm -v)"
 
-    echo "[*] Detected NPM version: $npm_version" >> "./build.log"
+    echo "[*] Detected NPM version: $npm_version" >> "./logs/build.log"
   else
-    echo "[*] NPM not found. Please install first" >> "./build.log"
+    echo "[*] NPM not found. Please install first" >> "./logs/build.log"
     exit
   fi
 }
@@ -46,9 +48,9 @@ func_yarn() {
     # yarn current version
     yarn_version="$(yarn -v)"
 
-    echo "[*] Detected Yarn version: $yarn_version" >> "./build.log"
+    echo "[*] Detected Yarn version: $yarn_version" >> "./logs/build.log"
   else
-    echo "[*] Yarn not found. Please install first" >> "./build.log"
+    echo "[*] Yarn not found. Please install first" >> "./logs/build.log"
     exit
   fi
 }
@@ -60,9 +62,9 @@ func_php() {
     # php current version
     php_version=$(php -v | grep ^PHP | cut -d' ' -f2)
 
-    echo "[*] Detected php version: $php_version" >> "./build.log"
+    echo "[*] Detected php version: $php_version" >> "./logs/build.log"
   else
-    echo "[*] PHP not found. Please install first" >> "./build.log"
+    echo "[*] PHP not found. Please install first" >> "./logs/build.log"
     exit
   fi
 }
@@ -73,9 +75,9 @@ func_composer() {
     # composer current version
     composer_version=$(composer -V | grep ^Composer | cut -d' ' -f3)
 
-    echo "[*] Detected composer version: $composer_version" >> "./build.log"
+    echo "[*] Detected composer version: $composer_version" >> "./logs/build.log"
   else
-    echo "[*] Composer not found. Please install first" >> "./build.log"
+    echo "[*] Composer not found. Please install first" >> "./logs/build.log"
     exit
   fi
 }
@@ -86,9 +88,9 @@ func_pm2() {
     # pm2 current version
     pm2_version=$(pm2 -v)
 
-    echo "[*] Detected pm2 version: $pm2_version" >> "./build.log"
+    echo "[*] Detected pm2 version: $pm2_version" >> "./logs/build.log"
   else
-    echo "[*] PM2 not found. Please install first" >> "./build.log"
+    echo "[*] PM2 not found. Please install first" >> "./logs/build.log"
     exit
   fi
 }
@@ -96,14 +98,14 @@ func_pm2() {
 func_build_log() {
   now="$(date +'%Y-%m-%d %H:%M')"
 
-  echo "[*] Build completed at $now" >> "./build.log"
+  echo "[*] Build completed at $now" >> "./logs/build.log"
 }
 
 if [ -f "./package.json" ]; then
-  echo "[*] Package.json detected" >> "./build.log"
+  echo "[*] Package.json detected" >> "./logs/build.log"
 
   if [ -d "./node_modules" ]; then
-    echo "[*] Remove node_modules" >> "./build.log"
+    echo "[*] Remove node_modules" >> "./logs/build.log"
     rm -rf "./node_modules"
   fi
 
@@ -113,12 +115,12 @@ if [ -f "./package.json" ]; then
     func_npm
 
     # Remove package-lock.json
-    echo "[*] Remove package-lock.json" >> "./build.log"
+    echo "[*] Remove package-lock.json" >> "./logs/build.log"
     rm -rf "./package-lock.json"
 
     # Install depedencies of package.json
-    echo "[*] Install depedencies of package.json using npm" >> "./build.log"
-    npm install &> "./npm.log"
+    echo "[*] Install depedencies of package.json using npm" >> "./logs/build.log"
+    npm install &> "./logs/npm.log"
 
   elif [ -f "./yarn.lock" ]; then
 
@@ -126,47 +128,47 @@ if [ -f "./package.json" ]; then
     func_yarn
 
     # Remove yarn.lock
-    echo "[*] Remove yarn.lock" >> "./build.log"
+    echo "[*] Remove yarn.lock" >> "./logs/build.log"
     rm -rf "./yarn.lock"
 
     # Install depedencies of package.json
-    echo "[*] Install depedencies of package.json using yarn" >> "./build.log"
-    yarn &> "./yarn.log"
+    echo "[*] Install depedencies of package.json using yarn" >> "./logs/build.log"
+    yarn &> "./logs/yarn.log"
 
     # Set alias command for run yarn
-    echo "[*] Set alias command for run yarn" >> "./build.log"
+    echo "[*] Set alias command for run yarn" >> "./logs/build.log"
     prun="yarn"
   else
-    echo "[*] No package-lock.json or yarn.lock found" >> "./build.log"
+    echo "[*] No package-lock.json or yarn.lock found" >> "./logs/build.log"
 
     # check npm
     func_npm
 
     # Install depedencies of package.json
-    echo "[*] Install depedencies of package.json using npm" >> "./build.log"
-    npm install &> "./npm.log"
+    echo "[*] Install depedencies of package.json using npm" >> "./logs/build.log"
+    npm install &> "./logs/npm.log"
 
   fi
 fi
 
 # check if project is NextJS
 if [ -f "./next.config.js" ]; then
-  echo "[*] It seems nextjs framework" >> "./build.log"
+  echo "[*] It seems nextjs framework" >> "./logs/build.log"
 
   # Find dist folder and remove
   if [ -f "./dist/index.js" ]; then
-    echo "[*] Remove folder './dist'" >> "./build.log"
+    echo "[*] Remove folder './dist'" >> "./logs/build.log"
     rm -rf "./dist"
   fi
 
   # Build nextjs framework
-  echo "[*] Build nextjs framework" >> "./build.log"
-  $prun build &> "./nextjs.log"
+  echo "[*] Build nextjs framework" >> "./logs/build.log"
+  $prun build &> "./logs/nextjs.log"
 
   # Find next-sitemap
   if [ -f "./next-sitemap.js" ]; then
-    echo "[*] Build next-sitemap plugin" >> "./build.log"
-    $prun sitemap &> "./next-sitemap.log"
+    echo "[*] Build next-sitemap plugin" >> "./logs/build.log"
+    $prun sitemap &> "./logs/next-sitemap.log"
   fi
 
   # write log
@@ -175,7 +177,7 @@ fi
 
 # check if project is ReactJS
 if [ -f "./node_modules/.bin/react-scripts" ]; then
-  echo "[*] It seems reactjs framework" >> "./build.log"
+  echo "[*] It seems reactjs framework" >> "./logs/build.log"
   
   # find build folder and remove
   if [ -d "./build" ]; then
@@ -183,8 +185,8 @@ if [ -f "./node_modules/.bin/react-scripts" ]; then
   fi
 
   # Build reactjs framework
-  echo "[*] Build reactjs framework" >> "./build.log"
-  $prun build &> "./reactjs.log"
+  echo "[*] Build reactjs framework" >> "./logs/build.log"
+  $prun build &> "./logs/reactjs.log"
 
   # write log
   func_build_log
@@ -194,7 +196,7 @@ fi
 if [ -f "./ace" ]; then
 
   if [ -f "./env.ts" ]; then
-    echo "[*] It seems adonis 5 framework" >> "./build.log"
+    echo "[*] It seems adonis 5 framework" >> "./logs/build.log"
 
     # find build folder and remove
     if [ -d "./build" ]; then
@@ -202,13 +204,13 @@ if [ -f "./ace" ]; then
     fi
 
     # Build adonis 5 framework
-    echo "[*] Build adonis 5 framework" >> "./build.log"
-    $prun build &> "./adonis5.log"
+    echo "[*] Build adonis 5 framework" >> "./logs/build.log"
+    $prun build &> "./logs/adonis5.log"
 
-    echo "[*] Copy env file into build folder" >> "./build.log"
+    echo "[*] Copy env file into build folder" >> "./logs/build.log"
     cp .env build/
 
-    echo "[*] Clean install on build folder" >> "./build.log"
+    echo "[*] Clean install on build folder" >> "./logs/build.log"
 
     if [ -f "./package-lock.json" ]; then
       ci="npm ci --production"
@@ -218,12 +220,12 @@ if [ -f "./ace" ]; then
 
     cd build/
 
-    $ci &> "./adonis5-production.log"
+    $ci &> "./logs/adonis5-production.log"
 
     cd ../
 
   else
-    echo "[*] It seems adonis framework" >> "./build.log"
+    echo "[*] It seems adonis framework" >> "./logs/build.log"
   fi
 
   # write log
@@ -243,33 +245,33 @@ if [ -f "./composer.json" ]; then
 
   # Find composer.lock file and remove
   if [ -f "./composer.lock" ]; then
-    echo "[*] Remove composer.lock file" >> "./build.log"
+    echo "[*] Remove composer.lock file" >> "./logs/build.log"
     rm -rf "./composer.lock"
   fi
 
   # Find vendor folder and remove
   if [ -d "./vendor" ]; then
-    echo "[*] Remove vendor folder" >> "./build.log"
+    echo "[*] Remove vendor folder" >> "./logs/build.log"
     rm -rf "./vendor"
   fi
 
   # Install depedencies of composer.json
-  echo "[*] Install depedencies of composer.json using composer" >> "./build.log"
-  $crun install &> "./composer.log"
+  echo "[*] Install depedencies of composer.json using composer" >> "./logs/build.log"
+  $crun install &> "./logs/composer.log"
 
   # check if project is Laravel
   if [ -f "./artisan" ]; then
-    echo "[*] It seems laravel framework" >> "./build.log"
+    echo "[*] It seems laravel framework" >> "./logs/build.log"
 
     artisan="$(php artisan)"
 
     # build javascript webpack
-    echo "[*] Bundling javascript files with webpack" >> "./build.log"
-    $prun prod &> "./laravel.log"
+    echo "[*] Bundling javascript files with webpack" >> "./logs/build.log"
+    $prun prod &> "./logs/laravel.log"
 
     # remove the cached bootstrap files
-    echo "[*] Remove the cached bootstrap files" >> "./build.log"
-    $artisan optimize:clear &> "./laravel.log"
+    echo "[*] Remove the cached bootstrap files" >> "./logs/build.log"
+    $artisan optimize:clear &> "./logs/laravel.log"
 
     # write log
     func_build_log
@@ -284,10 +286,7 @@ if [ -f "./ecosystem.config.js" ]; then
   func_pm2
 
   # start or restart server
-  echo "[*] Restarting server using pm2" >> "./build.log"
+  echo "[*] Restarting server using pm2" >> "./logs/build.log"
   pm2 restart ecosystem.config.js &>/dev/null
   
 fi
-
-func_remove_log
-
