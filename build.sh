@@ -34,7 +34,7 @@ func_npm() {
 
     echo "[*] Detected NPM version: $npm_version" >> "./build.log"
   else
-    echo "[*] NPM not found. exit" >> "./build.log"
+    echo "[*] NPM not found. Please install first" >> "./build.log"
     exit
   fi
 }
