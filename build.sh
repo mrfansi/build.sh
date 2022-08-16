@@ -27,7 +27,7 @@ fi
 
 func_npm() {
   # check if npm command exist
-  if hash npm 2>/dev/null; then
+  if type npm &>/dev/null; then
 
     # npm current version
     npm_version="$(npm -v)"
@@ -41,7 +41,7 @@ func_npm() {
 
 func_yarn() {
   # check if yarn command exist
-  if hash yarn 2>/dev/null; then
+  if type yarn &>/dev/null; then
 
     # yarn current version
     yarn_version="$(yarn -v)"
@@ -55,7 +55,7 @@ func_yarn() {
 
 func_php() {
   # print php version
-  if hash php 2>/dev/null; then
+  if type php &>/dev/null; then
 
     # php current version
     php_version=$(php -v | grep ^PHP | cut -d' ' -f2)
@@ -68,7 +68,7 @@ func_php() {
 }
 
 func_composer() {
-  if hash composer 2>/dev/null; then
+  if type composer &>/dev/null; then
 
     # composer current version
     composer_version=$(composer -V | grep ^Composer | cut -d' ' -f3)
@@ -81,7 +81,7 @@ func_composer() {
 }
 
 func_pm2() {
-  if hash pm2 2>/dev/null; then
+  if type pm2 &>/dev/null; then
 
     # pm2 current version
     pm2_version=$(pm2 -v)
