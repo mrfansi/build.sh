@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # default run package manager
-prun="$(which npm) run"
+prun="npm run"
 
 # default run composer manager
-crun="$(which composer)"
+crun="composer"
 
 # npm legacy version
 npm_legacy_version="6.14.4"
 
 func_remove_log() {
-  
+
   # remove build.log
   if [ -f "./build.log" ]; then
     rm -rf "./build.log"
@@ -136,7 +136,7 @@ if [ -f "./package.json" ]; then
 
     # Set alias command for run yarn
     echo "[*] Set alias command for run yarn" >> "./build.log"
-    prun="$(which yarn)"
+    prun="yarn"
   else
     echo "[*] No package-lock.json or yarn.lock found" >> "./build.log"
 
