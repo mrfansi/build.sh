@@ -21,7 +21,7 @@ func_logs() {
 
 func_npm() {
   # check if npm command exist
-  if type $cnpm &>/dev/null; then
+  if type "$cnpm" &>/dev/null; then
 
     # npm current version
     npm_version="$($cnpm -v)"
@@ -35,7 +35,7 @@ func_npm() {
 
 func_yarn() {
   # check if yarn command exist
-  if type $cyarn &>/dev/null; then
+  if type "$cyarn" &>/dev/null; then
 
     # yarn current version
     yarn_version="$(yarn -v)"
@@ -49,7 +49,7 @@ func_yarn() {
 
 func_php() {
   # print php version
-  if type $cphp &>/dev/null; then
+  if type "$cphp" &>/dev/null; then
 
     # php current version
     php_version=$($cphp -v | grep ^PHP | cut -d' ' -f2)
@@ -62,7 +62,7 @@ func_php() {
 }
 
 func_composer() {
-  if type $ccomposer &>/dev/null; then
+  if type "$ccomposer" &>/dev/null; then
 
     # composer current version
     composer_version=$($ccomposer -V | grep ^Composer | cut -d' ' -f3)
@@ -75,7 +75,7 @@ func_composer() {
 }
 
 func_pm2() {
-  if type $cpm2 &>/dev/null; then
+  if type "$cpm2" &>/dev/null; then
 
     # pm2 current version
     pm2_version=$($cpm2 -v)
@@ -94,6 +94,15 @@ func_build_log() {
 }
 
 func_logs
+
+if [ "$1" == "test" ]; then
+  func_npm
+  func_yarn
+  func_php
+  func_composer
+  func_pm2
+  exit
+fi
 
 if [ -f "./ecosystem.config.js" ]; then
   echo "[*] Stop server PM2 first" >> "./logs/build.log"
@@ -217,7 +226,7 @@ if [ -f "./ace" ]; then
       ci="$cyarn install --production"
     fi
 
-    cd build/
+    cd build/ || exit
 
     $ci &> "./logs/adonis5-production.log"
 
