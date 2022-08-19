@@ -206,11 +206,6 @@ if [ -f "./ace" ]; then
   if [ -f "./env.ts" ]; then
     echo "[*] It seems adonis 5 framework" >> "./logs/build.log"
 
-    # find build folder and remove
-    if [ -d "./build" ]; then
-      rm -rf "./build"
-    fi
-
     # Build adonis 5 framework
     echo "[*] Build adonis 5 framework" >> "./logs/build.log"
     $prun build &> "./logs/adonis5.log"
